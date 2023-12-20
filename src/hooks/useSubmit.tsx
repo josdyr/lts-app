@@ -1,6 +1,9 @@
-const useSubmit = () => {
-  const handleSubmit = async (payload, url) => {
-    setIsLoading(true);
+interface SubmitHook {
+  handleSubmit: (payload: any, url: string) => Promise<void>;
+}
+
+const useSubmit = (): SubmitHook => {
+  const handleSubmit = async (payload: any, url: string): Promise<void> => {
     try {
       let response = await fetch(url, {
         method: "POST",

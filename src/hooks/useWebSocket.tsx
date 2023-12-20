@@ -28,6 +28,6 @@ export const useWebSocket = () => {
   }, []);
 
   return () => {
-    client.stop();
+    // client.stop();
   };
 };
