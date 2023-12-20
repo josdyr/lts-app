@@ -24,14 +24,10 @@ const TeslaCars = () => {
     fetchData();
   }, []);
 
-  function printHello(index) {
-    console.log("Hello " + index);
-  }
-
   const renderTable = () => {
     return teslaCars.map((car, index) => {
       return (
-        <tr key={index} onClick={() => printHello(car.id)}>
+        <tr key={index}>
           <td>
             <Link to={`/tesla-cars/${car.id}`}>{car.id}</Link>
           </td>

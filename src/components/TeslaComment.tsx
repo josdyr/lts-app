@@ -3,9 +3,16 @@ import { useParams } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const Comment = () => {
-  const params = useParams();
-  const [comment, setComment] = useState([]);
+interface CommentItem {
+  id: number;
+  carId: number;
+  commentDescription: string;
+  user: string;
+}
+
+const Comment: React.FC = () => {
+  const params = useParams<{ id: string }>();
+  const [comment, setComment] = useState<CommentItem[]>([]);
   const localURL = "http://localhost:5052/api/comment";
   const azureURL = "https://app-lts.azurewebsites.net/api/comment";
 
@@ -26,12 +33,10 @@ const Comment = () => {
     fetchData();
   }, []);
 
-  function printHello(index) {
-    console.log("Hello " + index);
-  }
-
-  const renderTable = () => {
-    const filteredComments = comment.filter((item) => params.id == item.carId);
+  const renderTable = (): JSX.Element[] => {
+    const filteredComments = comment.filter(
+      (item) => params.id == item.carId.toString()
+    );
 
     const tableRows = filteredComments.map((item, index) => (
       <tr key={index}>

@@ -24,14 +24,10 @@ const cityCodes = () => {
     fetchData();
   }, []);
 
-  function printHello(index) {
-    console.log("Hello " + index);
-  }
-
   const renderTable = () => {
     return cityCodes.map((item, index) => {
       return (
-        <tr key={index} onClick={() => printHello(item.id)}>
+        <tr key={index}>
           <td>
             <Link to={`/cityitems/${item.id}`}>{item.id}</Link>
           </td>
