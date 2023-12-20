@@ -24,7 +24,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
+  /* display: flex; */
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -65,4 +65,19 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+nav {
+  color: #ffffff;
+  background-color: rgb(20, 20, 20);
+  padding: 16px 32px;
+}
+
+nav a {
+  margin-right: 16px;
+}
+
+nav a.active {
+  text-decoration: none;
+  font-weight: bold;
 }
