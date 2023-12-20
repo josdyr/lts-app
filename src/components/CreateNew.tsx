@@ -1,14 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import jsonQuery from "../../public/query.json";
 
+interface TeslaCar {
+  model: string;
+  location: string;
+  serialNumber: string;
+}
+
+interface CityCode {
+  city: string;
+  code: string;
+}
+
+interface NorwegianCity {
+  label: string;
+}
+
 export const CreateNew = () => {
-  const params = useParams();
-  const [teslaCar, setTeslaCar] = useState({});
-  const [cityCode, setCityCode] = useState({});
-  const [norwegianCities, setNorwegianCities] = useState({});
-  const [mergedCityWithCode, setMergedCityWithCode] = useState({});
-  const [wasValidated, setWasValidated] = useState(false);
+  const [teslaCar, setTeslaCar] = useState<TeslaCar>({
+    model: "",
+    location: "",
+    serialNumber: "",
+  });
+  const [cityCode, setCityCode] = useState<CityCode[]>([]);
+  const [norwegianCities, setNorwegianCities] = useState<NorwegianCity[]>([]);
+  const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
+  const [wasValidated, setWasValidated] = useState<boolean>(false);
+  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     fetchCityCode();
@@ -24,11 +42,18 @@ export const CreateNew = () => {
     }
   }, [cityCode, norwegianCities]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setTeslaCar({ ...teslaCar, [e.target.name]: e.target.value });
   };
 
-  function mergeCityWithCode(cityCode, norwegianCities) {
+  function mergeCityWithCode(
+    cityCode: CityCode[],
+    norwegianCities: NorwegianCity[]
+  ) {
     const mergedArray = cityCode.map((code) => {
       norwegianCities.find((city) => city.label === code.city);
       return { ...code };
@@ -38,9 +63,7 @@ export const CreateNew = () => {
 
   const fetchCityCode = async () => {
     try {
-      const response = await fetch(
-        "https://app-lts.azurewebsites.net/api/citycode"
-      );
+      const response = await fetch(currentURL + "/api/citycode");
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
@@ -51,13 +74,13 @@ export const CreateNew = () => {
     }
   };
 
-  function processData(data) {
+  function processData(data: any) {
     const values = data.value;
     const labels = data.dimension.Region.category.label;
 
-    const mappedValues = [];
+    const mappedValues: { label: string; value: number }[] = [];
 
-    values.forEach((value, index) => {
+    values.forEach((value: number, index: number) => {
       const labelKey = Object.keys(labels)[index];
       const label = labels[labelKey];
       mappedValues.push({ label, value });
@@ -96,7 +119,7 @@ export const CreateNew = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
     const payload = { ...teslaCar };
@@ -104,8 +127,7 @@ export const CreateNew = () => {
     try {
       let response = null;
 
-      payload.id = 0;
-      response = await fetch("https://app-lts.azurewebsites.net/api/teslacar", {
+      response = await fetch(currentURL + "/api/teslacar", {
         method: "POST", // Use POST for create
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -142,13 +164,12 @@ export const CreateNew = () => {
         <div className="mb-3">
           <label className="form-label">Model:</label>
           <select
-            type="text"
             name="model"
+            value={teslaCar.model}
             className="form-select"
             onChange={handleChange}
             required
           >
-            <option key="empty" value="empty"></option>
             <option key={"S"} value="Model S">
               Model S
             </option>
@@ -171,13 +192,12 @@ export const CreateNew = () => {
         <div className="mb-3">
           <label className="form-label">Location:</label>
           <select
-            type="text"
             name="location"
+            value={teslaCar.location}
             className="form-select"
             onChange={handleChange}
             required
           >
-            <option key="empty" value="empty"></option>
             {Object.values(mergedCityWithCode).map((item) => (
               <option key={item.city} value={item.city}>
                 {item.city} - {item.code}
@@ -192,10 +212,11 @@ export const CreateNew = () => {
           <input
             type="text"
             name="serialNumber"
+            value={teslaCar.serialNumber}
             className="form-control"
             onChange={handleChange}
             required
-            // readOnly
+            readOnly
           />
         </div>
         <button type="submit" className="btn btn-primary">

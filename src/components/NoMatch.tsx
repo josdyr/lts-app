@@ -1,8 +1,8 @@
-import React from "react";
+import { FC } from "react";
 
-type Props = {};
+interface Props {}
 
-const NoMatch = (props: Props) => {
+const NoMatch: FC<Props> = () => {
   return <div className="appContainer">No Match</div>;
 };
 

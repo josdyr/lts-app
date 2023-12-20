@@ -13,12 +13,11 @@ interface CommentItem {
 const Comment: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [comment, setComment] = useState<CommentItem[]>([]);
-  const localURL = "http://localhost:5052/api/comment";
-  const azureURL = "https://app-lts.azurewebsites.net/api/comment";
+  const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   const fetchData = async () => {
     try {
-      const response = await fetch(azureURL);
+      const response = await fetch(currentURL + "/api/comment");
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }

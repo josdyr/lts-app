@@ -34,12 +34,11 @@ export const ObjectDetail = () => {
   const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [submitState, setSubmitState] = useState("Submit");
+  const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `https://app-lts.azurewebsites.net/api/teslacar/${params.id}`
-      );
+      const response = await fetch(currentURL + `/api/teslacar/${params.id}`);
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
@@ -86,9 +85,7 @@ export const ObjectDetail = () => {
 
   const fetchCityCode = async () => {
     try {
-      const response = await fetch(
-        "https://app-lts.azurewebsites.net/api/citycode"
-      );
+      const response = await fetch(currentURL + "/api/citycode");
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
@@ -157,35 +154,26 @@ export const ObjectDetail = () => {
     try {
       let response = null;
       if (Object.values(teslaCar).every((x) => x === "")) {
-        response = await fetch(
-          `https://app-lts.azurewebsites.net/api/teslacar/${params.id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        response = await fetch(currentURL + `/api/teslacar/${params.id}`, {
+          method: "DELETE",
+        });
         console.log("Delete");
         return;
       }
       if (teslaCar.id !== 0) {
-        response = await fetch(
-          `https://app-lts.azurewebsites.net/api/teslacar/${teslaCar.id}`,
-          {
-            method: "PUT", // Use PUT for update
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
+        response = await fetch(currentURL + `/api/teslacar/${teslaCar.id}`, {
+          method: "PUT", // Use PUT for update
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         console.log("Update");
       } else {
         payload.id = 0;
-        response = await fetch(
-          "https://app-lts.azurewebsites.net/api/teslacar",
-          {
-            method: "POST", // Use POST for create
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
+        response = await fetch(currentURL + "/api/teslacar", {
+          method: "POST", // Use POST for create
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         if (!response.ok) {
           alert(
             `Serial number is not valid. Correct format could be: TC-00001-RG`

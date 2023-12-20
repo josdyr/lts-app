@@ -2,19 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const cityCodes = () => {
-  const [cityCodes, setcityCodes] = useState([]);
+interface CityCode {
+  id: string;
+  code: string;
+  city: string;
+}
 
-  const fetchData = async () => {
+const cityCodes: React.FC = () => {
+  const [cityCodes, setCityCodes] = useState<CityCode[]>([]);
+  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+
+  const fetchData = async (): Promise<void> => {
     try {
-      const response = await fetch(
-        "https://app-lts.azurewebsites.net/api/citycode"
-      );
+      const response = await fetch(currentURL + "/api/citycode");
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
-      const data = await response.json();
-      setcityCodes(data);
+      const data: CityCode[] = await response.json();
+      setCityCodes(data);
     } catch (error) {
       console.error("error fetching data: ", error);
     }
@@ -24,8 +29,8 @@ const cityCodes = () => {
     fetchData();
   }, []);
 
-  const renderTable = () => {
-    return cityCodes.map((item, index) => {
+  const renderTable = (): JSX.Element[] => {
+    return cityCodes.map((item: CityCode, index: number) => {
       return (
         <tr key={index}>
           <td>

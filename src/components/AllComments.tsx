@@ -3,13 +3,19 @@ import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
 
-const AllComments = () => {
-  const [allComments, setAllComments] = useState([]);
-  const localURL = "http://localhost:5052/api/comment";
-  const azureURL = "https://app-lts.azurewebsites.net/api/comment";
+interface Comment {
+  id: string;
+  carId: string;
+  commentDescription: string;
+  user: string;
+}
 
-  function toLowerCamelCase(obj) {
-    let newObj = {};
+const AllComments: React.FC = () => {
+  const [allComments, setAllComments] = useState<Comment[]>([]);
+  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+
+  function toLowerCamelCase(obj: any): any {
+    let newObj: any = {};
     for (let key in obj) {
       let newKey = key.charAt(0).toLowerCase() + key.slice(1);
       newObj[newKey] = obj[key];
@@ -28,13 +34,29 @@ const AllComments = () => {
       await client.start();
 
       client.on("server-message", (e) => {
-        console.log(`Received message: ${e.message.data}`);
-        let deserializedData = JSON.parse(e.message.data);
-        let camelCaseJson = toLowerCamelCase(deserializedData);
-        // setAllComments once and only once
-        setAllComments((prev) => {
-          return [...prev, camelCaseJson];
-        });
+        let data = e.message.data;
+
+        // // Check if the data is an instance of ArrayBuffer
+        // if (data instanceof ArrayBuffer) {
+        //   // Convert ArrayBuffer to string
+        //   const decoder = new TextDecoder();
+        //   data = decoder.decode(data);
+        // }
+
+        // Check if data is a string before parsing
+        if (typeof data === "string") {
+          console.log(`Received message: ${data}`);
+          let deserializedData = JSON.parse(data); // data is confirmed to be a string
+          let camelCaseJson = toLowerCamelCase(deserializedData);
+
+          // setAllComments once and only once
+          setAllComments((prev) => {
+            return [...prev, camelCaseJson];
+          });
+        } else {
+          // Handle the case where data is not a string
+          console.error("Received data is not a string:", data);
+        }
       });
 
       client.on("connected", (e) => {
@@ -49,11 +71,11 @@ const AllComments = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(azureURL);
+      const response = await fetch(currentURL + "/api/comment");
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
-      const data = await response.json();
+      const data: Comment[] = await response.json();
       setAllComments(data);
     } catch (error) {
       console.error("error fetching data: ", error);

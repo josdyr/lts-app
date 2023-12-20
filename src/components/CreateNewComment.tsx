@@ -1,26 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import jsonQuery from "../../public/query.json";
+import React, { useState } from "react";
+
+interface Comment {
+  carId: string;
+  commentDescription: string;
+  user: string;
+}
 
 export const CreateNewComment = () => {
-  const params = useParams();
-  const [newComment, setNewComment] = useState({});
-  const [wasValidated, setWasValidated] = useState(false);
+  const [newComment, setNewComment] = useState<Comment>({
+    carId: "",
+    commentDescription: "",
+    user: "",
+  });
 
-  const handleChange = (e) => {
+  const [wasValidated, setWasValidated] = useState<boolean>(false);
+  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setNewComment({ ...newComment, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
-    const payload = { ...newComment };
+    const payload: Comment = { ...newComment };
 
     try {
-      let response = null;
+      let response: Response | null = null;
 
-      payload.id = 0;
-      response = await fetch("https://app-lts.azurewebsites.net/api/comment", {
+      response = await fetch(currentURL + "/api/comment", {
         method: "POST", // Use POST for create
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -1,27 +1,32 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
-import jsonQuery from "../../public/query.json";
+
+interface Comment {
+  id: string;
+  carId: string;
+  commentDescription: string;
+  user: string;
+}
 
 export const CommentDetail = () => {
   const params = useParams();
-  const [comment, setComment] = useState({
+  const [comment, setComment] = useState<Comment>({
     id: "",
     carId: "",
     commentDescription: "",
     user: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitState, setSubmitState] = useState("Submit");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [submitState, setSubmitState] = useState<string>("Submit");
+  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `https://app-lts.azurewebsites.net/api/comment/${params.id}`
-      );
+      const response = await fetch(currentURL + `/api/comment/${params.id}`);
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
-      const data = await response.json();
+      const data: Comment = await response.json();
       setComment(data);
     } catch (error) {
       console.error("error fetching data: ", error);
@@ -32,52 +37,43 @@ export const CommentDetail = () => {
     fetchData();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setComment({ ...comment, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault(); // Prevent the default form submission
 
     setIsLoading(true);
     setSubmitState("Loading");
-    document.querySelector(".btn-primary").classList.add("btn-secondary");
-    document.querySelector(".btn-primary").classList.remove("btn-primary");
+    document.querySelector(".btn-primary")!.classList.add("btn-secondary");
+    document.querySelector(".btn-primary")!.classList.remove("btn-primary");
 
-    const payload = { ...comment };
+    const payload: Comment = { ...comment };
 
     try {
       let response = null;
       if (Object.values(comment).every((x) => x === "")) {
-        response = await fetch(
-          `https://app-lts.azurewebsites.net/api/comment/${params.id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        response = await fetch(currentURL + `/api/comment/${params.id}`, {
+          method: "DELETE",
+        });
         console.log("Delete");
         return;
       }
       if (comment.id !== "") {
-        response = await fetch(
-          `https://app-lts.azurewebsites.net/api/comment/${comment.id}`,
-          {
-            method: "PUT", // Use PUT for update
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
+        response = await fetch(currentURL + `/api/comment/${comment.id}`, {
+          method: "PUT", // Use PUT for update
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         console.log("Update");
       } else {
-        payload.id = 0;
-        response = await fetch(
-          "https://app-lts.azurewebsites.net/api/comment",
-          {
-            method: "POST", // Use POST for create
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
+        payload.id = "0";
+        response = await fetch(currentURL + "/api/comment", {
+          method: "POST", // Use POST for create
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         if (!response.ok) {
           throw new Error(`HTTPS error! Status: ${response.status}`);
         } else {
@@ -99,17 +95,17 @@ export const CommentDetail = () => {
     setTimeout(function () {
       setIsLoading(false);
       setSubmitState("Submitted");
-      document.querySelector(".btn-secondary").classList.add("btn-success");
+      document.querySelector(".btn-secondary")!.classList.add("btn-success");
       document
-        .querySelector(".btn-secondary")
+        .querySelector(".btn-secondary")!
         .classList.remove("btn-secondary");
     }, 500);
 
     setTimeout(function () {
       setIsLoading(false);
       setSubmitState("Submit");
-      document.querySelector(".btn-success").classList.add("btn-primary");
-      document.querySelector(".btn-success").classList.remove("btn-success");
+      document.querySelector(".btn-success")!.classList.add("btn-primary");
+      document.querySelector(".btn-success")!.classList.remove("btn-success");
     }, 2000);
   };
 

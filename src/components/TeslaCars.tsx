@@ -2,14 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const TeslaCars = () => {
-  const [teslaCars, setTeslaCars] = useState([]);
-  const localURL = "http://localhost:5052/api/teslacar";
-  const azureURL = "https://app-lts.azurewebsites.net/api/teslacar";
+interface TeslaCar {
+  id: string;
+  model: string;
+  serialNumber: string;
+  location: string;
+}
+
+const TeslaCars: React.FC = () => {
+  const [teslaCars, setTeslaCars] = useState<TeslaCar[]>([]);
+  const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   const fetchData = async () => {
     try {
-      const response = await fetch(azureURL);
+      const response = await fetch(currentURL + "/api/teslacar");
       if (!response.ok) {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
@@ -25,7 +31,7 @@ const TeslaCars = () => {
   }, []);
 
   const renderTable = () => {
-    return teslaCars.map((car, index) => {
+    return teslaCars.map((car: TeslaCar, index: number) => {
       return (
         <tr key={index}>
           <td>
