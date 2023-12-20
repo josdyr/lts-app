@@ -170,6 +170,7 @@ export const CreateNew = () => {
             onChange={handleChange}
             required
           >
+            <option key="empty" value="empty"></option>
             <option key={"S"} value="Model S">
               Model S
             </option>
@@ -198,6 +199,7 @@ export const CreateNew = () => {
             onChange={handleChange}
             required
           >
+            <option key="empty" value="empty"></option>
             {Object.values(mergedCityWithCode).map((item) => (
               <option key={item.city} value={item.city}>
                 {item.city} - {item.code}
