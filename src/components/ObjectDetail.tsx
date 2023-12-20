@@ -6,6 +6,7 @@ import TeslaComment from "./TeslaComment";
 export const ObjectDetail = () => {
   const params = useParams();
   const [teslaCar, setTeslaCar] = useState({
+    teslaCarGuid: "",
     id: "",
     model: "",
     location: "",
@@ -205,11 +206,12 @@ export const ObjectDetail = () => {
         <div className="mb-3">
           <label className="form-label">GUID:</label>
           <input
-            type="string"
-            name="id"
+            type="text"
+            name="teslaCarGuid"
             value={teslaCar.teslaCarGuid}
             className="form-control"
             onChange={handleChange}
+            required
             readOnly
           />
           <div className="valid-feedback"></div>
