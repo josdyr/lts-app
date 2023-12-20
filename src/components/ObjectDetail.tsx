@@ -3,18 +3,35 @@ import { useParams } from "react-router-dom";
 import jsonQuery from "../../public/query.json";
 import TeslaComment from "./TeslaComment";
 
+interface TeslaCar {
+  teslaCarGuid: string;
+  id: number;
+  model: string;
+  location: string;
+  serialNumber: string;
+}
+
+interface CityCode {
+  city: string;
+  code: string;
+}
+
+interface NorwegianCity {
+  label: string;
+}
+
 export const ObjectDetail = () => {
-  const params = useParams();
-  const [teslaCar, setTeslaCar] = useState({
+  const params = useParams<{ id: string }>();
+  const [teslaCar, setTeslaCar] = useState<TeslaCar>({
     teslaCarGuid: "",
-    id: "",
+    id: 0,
     model: "",
     location: "",
     serialNumber: "",
   });
-  const [cityCode, setCityCode] = useState({});
-  const [norwegianCities, setNorwegianCities] = useState({});
-  const [mergedCityWithCode, setMergedCityWithCode] = useState({});
+  const [cityCode, setCityCode] = useState<CityCode[]>([]);
+  const [norwegianCities, setNorwegianCities] = useState<NorwegianCity[]>([]);
+  const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [submitState, setSubmitState] = useState("Submit");
 
@@ -48,11 +65,18 @@ export const ObjectDetail = () => {
     }
   }, [cityCode, norwegianCities]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setTeslaCar({ ...teslaCar, [e.target.name]: e.target.value });
   };
 
-  function mergeCityWithCode(cityCode, norwegianCities) {
+  function mergeCityWithCode(
+    cityCode: CityCode[],
+    norwegianCities: NorwegianCity[]
+  ) {
     const mergedArray = cityCode.map((code) => {
       norwegianCities.find((city) => city.label === code.city);
       return { ...code };
@@ -75,13 +99,13 @@ export const ObjectDetail = () => {
     }
   };
 
-  function processData(data) {
+  function processData(data: any) {
     const values = data.value;
     const labels = data.dimension.Region.category.label;
 
-    const mappedValues = [];
+    const mappedValues: { label: string; value: number }[] = [];
 
-    values.forEach((value, index) => {
+    values.forEach((value: number, index: number) => {
       const labelKey = Object.keys(labels)[index];
       const label = labels[labelKey];
       mappedValues.push({ label, value });
@@ -120,13 +144,13 @@ export const ObjectDetail = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
     setIsLoading(true);
     setSubmitState("Loading");
-    document.querySelector(".btn-primary").classList.add("btn-secondary");
-    document.querySelector(".btn-primary").classList.remove("btn-primary");
+    document.querySelector(".btn-primary")!.classList.add("btn-secondary");
+    document.querySelector(".btn-primary")!.classList.remove("btn-primary");
 
     const payload = { ...teslaCar };
 
@@ -142,7 +166,7 @@ export const ObjectDetail = () => {
         console.log("Delete");
         return;
       }
-      if (teslaCar.id !== "") {
+      if (teslaCar.id !== 0) {
         response = await fetch(
           `https://app-lts.azurewebsites.net/api/teslacar/${teslaCar.id}`,
           {
@@ -186,17 +210,17 @@ export const ObjectDetail = () => {
     setTimeout(function () {
       setIsLoading(false);
       setSubmitState("Submitted");
-      document.querySelector(".btn-secondary").classList.add("btn-success");
+      document.querySelector(".btn-secondary")!.classList.add("btn-success");
       document
-        .querySelector(".btn-secondary")
+        .querySelector(".btn-secondary")!
         .classList.remove("btn-secondary");
     }, 500);
 
     setTimeout(function () {
       setIsLoading(false);
       setSubmitState("Submit");
-      document.querySelector(".btn-success").classList.add("btn-primary");
-      document.querySelector(".btn-success").classList.remove("btn-success");
+      document.querySelector(".btn-success")!.classList.add("btn-primary");
+      document.querySelector(".btn-success")!.classList.remove("btn-success");
     }, 2000);
   };
 
@@ -232,7 +256,6 @@ export const ObjectDetail = () => {
         <div className="mb-3">
           <label className="form-label">Model:</label>
           <select
-            type="text"
             name="model"
             value={teslaCar.model}
             className="form-select"
@@ -261,7 +284,6 @@ export const ObjectDetail = () => {
         <div className="mb-3">
           <label className="form-label">Location:</label>
           <select
-            type="text"
             name="location"
             value={teslaCar.location}
             className="form-select"
