@@ -1,9 +1,10 @@
+import React from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 export const Home = () => {
   const containerStyle = {
     width: "100%",
-    height: "750px",
+    height: "400px",
   };
 
   // Coordinates for the cities
@@ -21,8 +22,9 @@ export const Home = () => {
 
   return (
     <div className="appContainer">
+      <div>Home</div>
       <LoadScript googleMapsApiKey={apiKey}>
-        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={7}>
+        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={5}>
           <Marker position={stavanger} />
           <Marker position={bergen} />
           <Marker position={oslo} />
