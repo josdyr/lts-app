@@ -26,7 +26,7 @@ const AllComments: React.FC = () => {
   useEffect(() => {
     // Instantiates the client object
     const client = new WebPubSubClient(
-      "wss://wps-communication.webpubsub.azure.com/client/hubs/Hub?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtY29tbXVuaWNhdGlvbi53ZWJwdWJzdWIuYXp1cmUuY29tL2NsaWVudC9odWJzL0h1YiIsImlhdCI6MTcwMzA4MTU5MywiZXhwIjoxNzAzMTY3OTkzfQ.m7xzW8ImuEPV5IfmYu0eo6NjDsEO-FADEnfkukWUw7Y"
+      "wss://wps-communication.webpubsub.azure.com/client/hubs/Hub?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtY29tbXVuaWNhdGlvbi53ZWJwdWJzdWIuYXp1cmUuY29tL2NsaWVudC9odWJzL0h1YiIsImlhdCI6MTcwMzE1MjUzOCwiZXhwIjoxNzAzMjM4OTM4fQ.FvNFNI6FMT1vXp1G19mX5y9sFTHYhKZgYKRbfDANQCc"
     );
 
     (async () => {
