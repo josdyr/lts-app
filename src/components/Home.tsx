@@ -13,8 +13,8 @@ export const Home = () => {
 
   // Center the map around southern Norway
   const center = {
-    lat: 59.913869,
-    lng: 7.752245,
+    lat: (stavanger.lat + bergen.lat + oslo.lat) / 3,
+    lng: (stavanger.lng + bergen.lng + oslo.lng) / 3,
   };
 
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
