@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { WebPubSubClient } from "@azure/web-pubsub-client";
+// import { WebPubSubClient } from "@azure/web-pubsub-client";
+import { WebPubSubServiceClient } from "@azure/web-pubsub";
+import WebSocket from "ws";
 
 interface Comment {
   id: string;
@@ -26,7 +28,7 @@ const AllComments: React.FC = () => {
   useEffect(() => {
     // Instantiates the client object
     const client = new WebPubSubClient(
-      "wss://wps-communication.webpubsub.azure.com/client/hubs/Hub?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtY29tbXVuaWNhdGlvbi53ZWJwdWJzdWIuYXp1cmUuY29tL2NsaWVudC9odWJzL0h1YiIsImlhdCI6MTcwMzE1MjUzOCwiZXhwIjoxNzAzMjM4OTM4fQ.FvNFNI6FMT1vXp1G19mX5y9sFTHYhKZgYKRbfDANQCc"
+      "wss://wps-communication.webpubsub.azure.com/client/hubs/Hub?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtY29tbXVuaWNhdGlvbi53ZWJwdWJzdWIuYXp1cmUuY29tL2NsaWVudC9odWJzL0h1YiIsImlhdCI6MTcwMzI4MjUwMywiZXhwIjoxNzAzMzY4OTAzfQ.6ralcj0w8Dv5MrJTvppOIhtes2YZxiUPCoJ_QhkhYq4"
     );
 
     (async () => {
