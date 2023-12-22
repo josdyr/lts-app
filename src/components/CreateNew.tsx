@@ -47,7 +47,21 @@ export const CreateNew = () => {
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setTeslaCar({ ...teslaCar, [e.target.name]: e.target.value });
+    debugger;
+    // populate serial number with model and location i.e: TC-00001-RG
+    const serialNumber = "TX-00001-XX";
+    if (e.target.name === "model") {
+    } else if (e.target.name === "location") {
+      const serialNumber = `TX-00001-${e.target.value
+        .substring(0, 2)
+        .toUpperCase()}`;
+      // setTeslaCar({ ...teslaCar, serialNumber });
+    }
+    setTeslaCar({
+      ...teslaCar,
+      [e.target.name]: e.target.value,
+      serialNumber,
+    });
   };
 
   function mergeCityWithCode(
