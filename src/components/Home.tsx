@@ -1,5 +1,5 @@
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import React, { useState, useEffect, useCallback } from "react";
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { useState, useEffect, useCallback } from "react";
 
 interface TeslaCar {
   id: string;
@@ -10,7 +10,6 @@ interface TeslaCar {
 
 export const Home = () => {
   const [teslaCars, setTeslaCars] = useState<TeslaCar[]>([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   const fetchData = async () => {
@@ -21,7 +20,6 @@ export const Home = () => {
       }
       const data = await response.json();
       setTeslaCars(data);
-      setIsDataLoaded(true);
       console.log(data);
     } catch (error) {
       console.error("error fetching data: ", error);
@@ -41,7 +39,7 @@ export const Home = () => {
   const stavanger = { lat: 58.969975, lng: 5.733107 };
   const bergen = { lat: 60.391263, lng: 5.322054 };
   const oslo = { lat: 59.913869, lng: 10.752245 };
-  const kristiansand = { lat: 59.913869, lng: 10.752245 };
+  // const kristiansand = { lat: 59.913869, lng: 10.752245 };
 
   // make all consts in a map
   const cities = {

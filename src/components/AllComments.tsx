@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-// import { WebPubSubClient } from "@azure/web-pubsub-client";
-import { WebPubSubServiceClient } from "@azure/web-pubsub";
-import WebSocket from "ws";
+import { WebPubSubClient } from "@azure/web-pubsub-client";
 
 interface Comment {
   id: string;
@@ -26,24 +24,13 @@ const AllComments: React.FC = () => {
   }
 
   useEffect(() => {
-    // Instantiates the client object
-    const client = new WebPubSubClient(
-      "wss://wps-communication.webpubsub.azure.com/client/hubs/Hub?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtY29tbXVuaWNhdGlvbi53ZWJwdWJzdWIuYXp1cmUuY29tL2NsaWVudC9odWJzL0h1YiIsImlhdCI6MTcwMzI4MjUwMywiZXhwIjoxNzAzMzY4OTAzfQ.6ralcj0w8Dv5MrJTvppOIhtes2YZxiUPCoJ_QhkhYq4"
-    );
+    const client = new WebPubSubClient(import.meta.env.VITE_WPS_CONNECTION);
 
     (async () => {
-      // Starts the client connection with your Web PubSub resource
       await client.start();
 
       client.on("server-message", (e) => {
         let data = e.message.data;
-
-        // // Check if the data is an instance of ArrayBuffer
-        // if (data instanceof ArrayBuffer) {
-        //   // Convert ArrayBuffer to string
-        //   const decoder = new TextDecoder();
-        //   data = decoder.decode(data);
-        // }
 
         // Check if data is a string before parsing
         if (typeof data === "string") {

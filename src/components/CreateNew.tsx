@@ -49,12 +49,10 @@ export const CreateNew = () => {
   ) => {
     debugger;
     // populate serial number with model and location i.e: TC-00001-RG
-    const serialNumber = "TX-00001-XX";
+    let serialNumber = "TX-00001-XX";
     if (e.target.name === "model") {
     } else if (e.target.name === "location") {
-      const serialNumber = `TX-00001-${e.target.value
-        .substring(0, 2)
-        .toUpperCase()}`;
+      serialNumber = `TX-00001-${e.target.value.substring(0, 2).toUpperCase()}`;
       // setTeslaCar({ ...teslaCar, serialNumber });
     }
     setTeslaCar({
