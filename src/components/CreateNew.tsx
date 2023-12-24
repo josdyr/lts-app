@@ -26,6 +26,9 @@ export const CreateNew = () => {
   const [norwegianCities, setNorwegianCities] = useState<NorwegianCity[]>([]);
   const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
   const [wasValidated, setWasValidated] = useState<boolean>(false);
+  const [model, setModel] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [serialNumber, setSerialNumber] = useState<string>("TX-00001-RG");
   const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   useEffect(() => {
@@ -47,18 +50,17 @@ export const CreateNew = () => {
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLSelectElement>
   ) => {
-    debugger;
-    // populate serial number with model and location i.e: TC-00001-RG
-    let serialNumber = "TX-00001-XX";
-    if (e.target.name === "model") {
-    } else if (e.target.name === "location") {
-      serialNumber = `TX-00001-${e.target.value.substring(0, 2).toUpperCase()}`;
-      // setTeslaCar({ ...teslaCar, serialNumber });
+    const { name, value } = e.target;
+
+    if (name === "model") {
+      setModel(value);
+    } else if (name === "location") {
+      setLocation(value);
     }
+
     setTeslaCar({
       ...teslaCar,
-      [e.target.name]: e.target.value,
-      serialNumber,
+      [name]: value,
     });
   };
 
