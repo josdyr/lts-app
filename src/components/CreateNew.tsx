@@ -26,9 +26,6 @@ export const CreateNew = () => {
   const [norwegianCities, setNorwegianCities] = useState<NorwegianCity[]>([]);
   const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
   const [wasValidated, setWasValidated] = useState<boolean>(false);
-  const [model, setModel] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [serialNumber, setSerialNumber] = useState<string>("TX-00001-RG");
   const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   useEffect(() => {
@@ -50,18 +47,20 @@ export const CreateNew = () => {
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const updatedTeslaCar = { ...teslaCar, [e.target.name]: e.target.value };
 
-    if (name === "model") {
-      setModel(value);
-    } else if (name === "location") {
-      setLocation(value);
+    // Generate serialNumber when model or location changes
+    if (e.target.name === "model" || e.target.name === "location") {
+      const modelPrefix = updatedTeslaCar.model
+        ? `T${updatedTeslaCar.model}`
+        : "T";
+      const locationSuffix = updatedTeslaCar.location
+        ? updatedTeslaCar.location.toUpperCase().substring(0, 2)
+        : "";
+      updatedTeslaCar.serialNumber = `${modelPrefix}-00001-${locationSuffix}`;
     }
 
-    setTeslaCar({
-      ...teslaCar,
-      [name]: value,
-    });
+    setTeslaCar(updatedTeslaCar);
   };
 
   function mergeCityWithCode(
@@ -185,19 +184,19 @@ export const CreateNew = () => {
             required
           >
             <option key="empty" value="empty"></option>
-            <option key={"S"} value="Model S">
+            <option key={"S"} value="S">
               Model S
             </option>
-            <option key={"3"} value="Model 3">
+            <option key={"3"} value="3">
               Model 3
             </option>
-            <option key={"X"} value="Model X">
+            <option key={"X"} value="X">
               Model X
             </option>
-            <option key={"Y"} value="Model Y">
+            <option key={"Y"} value="Y">
               Model Y
             </option>
-            <option key={"C"} value="Cyber Truck">
+            <option key={"C"} value="C">
               Cyber Truck
             </option>
           </select>
