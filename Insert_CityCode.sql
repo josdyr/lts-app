@@ -1,3 +1,9 @@
+SELECT * FROM [dbo].[CityCodes]
+
+DELETE FROM [dbo].[CityCodes]
+
+DBCC CHECKIDENT ('CityCodes', RESEED, 0);
+
 INSERT INTO [dbo].[CityCodes] (City, Code)
 VALUES
 ('Arendal', 'AG'),

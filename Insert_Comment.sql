@@ -1,3 +1,9 @@
+SELECT * FROM [dbo].[Comment]
+
+DELETE FROM [dbo].[Comment]
+
+DBCC CHECKIDENT ('Comment', RESEED, 0);
+
 INSERT INTO [dbo].[Comment] ([CarId], [CommentDescription], [User])
 VALUES
 (00001, 'Looking forward to getting this car. I just ordered it with all the best specs, hope I get it soon lol 🤞🏎️', 'josdyr'),

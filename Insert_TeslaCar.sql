@@ -1,3 +1,9 @@
+SELECT * FROM [dbo].[TeslaCars]
+
+DELETE FROM [dbo].[TeslaCars]
+
+DBCC CHECKIDENT ('TeslaCars', RESEED, 0);
+
 INSERT INTO [dbo].[TeslaCars] (Model, SerialNumber, Location)
 VALUES
 ('S', 'TS-00018-RG', 'Stavanger'),
