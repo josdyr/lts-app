@@ -1,5 +1,6 @@
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { useState, useEffect, useCallback } from "react";
+import { WebPubSubClient } from "@azure/web-pubsub-client";
 
 interface TeslaCar {
   id: string;
@@ -12,6 +13,53 @@ export const Home = () => {
   const [teslaCars, setTeslaCars] = useState<TeslaCar[]>([]);
   const [isMapLoading, setisMapLoading] = useState(true);
   const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+
+  function toLowerCamelCase(obj: any): any {
+    let newObj: any = {};
+    for (let key in obj) {
+      let newKey = key.charAt(0).toLowerCase() + key.slice(1);
+      newObj[newKey] = obj[key];
+    }
+    return newObj;
+  }
+
+  useEffect(() => {
+    const client = new WebPubSubClient(import.meta.env.VITE_WPS_CONNECTION);
+
+    (async () => {
+      await client.start();
+
+      client.on("server-message", (e) => {
+        let data = e.message.data;
+
+        // Check if data is a string before parsing
+        if (typeof data === "string") {
+          console.log(`Received message: ${data}`);
+          let deserializedData = JSON.parse(data); // data is confirmed to be a string
+          let camelCaseJson = toLowerCamelCase(deserializedData);
+
+          // setTeslaCars once and only once
+          setTeslaCars((prev) => {
+            return [...prev, camelCaseJson];
+          });
+          // re-render the map
+          setisMapLoading(true);
+          fetchData();
+        } else {
+          // Handle the case where data is not a string
+          console.error("Received data is not a string:", data);
+        }
+      });
+
+      client.on("connected", (e) => {
+        console.log(`Connection ${e.connectionId} is connected.`);
+      });
+
+      client.on("disconnected", (e) => {
+        console.log(`Connection disconnected: ${e.message}`);
+      });
+    })();
+  }, []);
 
   const fetchData = async () => {
     try {
