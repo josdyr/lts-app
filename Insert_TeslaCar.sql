@@ -4,10 +4,15 @@ DELETE FROM [dbo].[TeslaCars]
 
 DBCC CHECKIDENT ('TeslaCars', RESEED, 0);
 
-INSERT INTO [dbo].[TeslaCars] (Model, SerialNumber, Location)
+INSERT INTO [dbo].[TeslaCars] (TeslaCarGuid, Model, SerialNumber, Location)
 VALUES
-('S', 'TS-00018-RG', 'Stavanger'),
-('X', 'TX-00019-VL', 'Bergen'),
-('3', 'T3-00020-OS', 'Oslo'),
-('Y', 'TY-00021-AG', 'Kristiansand'),
-('C', 'TY-00021-AG', 'Flekkefjord')
+(newid(), 'S', 'TS-00018-RG', 'Stavanger'),
+(newid(), 'X', 'TX-00019-VL', 'Bergen'),
+(newid(), '3', 'T3-00020-OS', 'Oslo'),
+(newid(), 'Y', 'TY-00021-AG', 'Kristiansand'),
+(newid(), 'C', 'TY-00021-AG', 'Flekkefjord'),
+(newid(), 'X', 'TY-00021-RG', 'Haugesund'),
+(newid(), 'Y', 'TY-00021-AG', 'Grimstad'),
+(newid(), 'C', 'TY-00021-AG', 'Porsgrunn'),
+(newid(), '3', 'TY-00021-OS', 'Oslo'),
+(newid(), 'S', 'TY-00021-RG', 'Stavanger')
