@@ -427,8 +427,8 @@ export const ObjectDetail = () => {
         <button type="submit" className="btn btn-primary" disabled={isLoading}>
           {submitState}
         </button>
-        <TeslaComment />
       </form>
+      <TeslaComment />
       <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap
           mapContainerStyle={containerStyle}

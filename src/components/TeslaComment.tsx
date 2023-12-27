@@ -12,8 +12,14 @@ interface CommentItem {
 }
 
 const Comment: React.FC = () => {
-  const params = useParams<{ id: string }>();
-  const [comment, setComment] = useState<CommentItem[]>([]);
+  const params = useParams<{ id: any }>();
+  const [allComments, setAllComments] = useState<CommentItem[]>([]);
+  const [currentComment, setCurrentComment] = useState<CommentItem>({
+    id: 0,
+    carId: parseInt(params.id),
+    commentDescription: "",
+    user: "",
+  });
   const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   function toLowerCamelCase(obj: any): any {
@@ -40,8 +46,8 @@ const Comment: React.FC = () => {
           let deserializedData = JSON.parse(data); // data is confirmed to be a string
           let camelCaseJson = toLowerCamelCase(deserializedData);
 
-          // setComment once and only once
-          setComment((prev) => {
+          // setallComments once and only once
+          setAllComments((prev) => {
             return [...prev, camelCaseJson];
           });
         } else {
@@ -67,7 +73,7 @@ const Comment: React.FC = () => {
         throw new Error(`HTTPS error! status: ${response.status}`);
       }
       const data = await response.json();
-      setComment(data);
+      setAllComments(data);
     } catch (error) {
       console.error("error fetching data: ", error);
     }
@@ -77,8 +83,40 @@ const Comment: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const payload = { ...currentComment };
+
+    try {
+      let response = null;
+      response = await fetch(currentURL + "/api/comment", {
+        method: "POST", // Use POST for create
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        alert(
+          `Serial number is not valid. Correct format could be: TC-00001-RG`
+        );
+        throw new Error(`HTTPS error! Status: ${response.status}`);
+      } else {
+        console.log("Create");
+      }
+
+      if (!response.ok) {
+        // const errorData = await response.json();
+        alert(
+          `Serial number is not valid. Correct format could be: TC-00001-RG`
+        );
+        throw new Error(`HTTPS error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
   const renderTable = (): JSX.Element[] => {
-    const filteredComments = comment.filter(
+    const filteredComments = allComments.filter(
       (item) => params.id == item.carId.toString()
     );
 
@@ -93,25 +131,21 @@ const Comment: React.FC = () => {
       </tr>
     ));
 
-    // // Add a new empty row at the end
-    // tableRows.push(
-    //   <tr key={"newRow"}>
-    //     <td>
-    //       <input type="number" />
-    //     </td>
-    //     <td>
-    //       <input type="number" />
-    //     </td>
-    //     <td>
-    //       <input type="text" />
-    //     </td>
-    //     <td>
-    //       <input type="text" />
-    //     </td>
-    //   </tr>
-    // );
-
     return tableRows;
+  };
+
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setCurrentComment((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   return (
@@ -127,7 +161,103 @@ const Comment: React.FC = () => {
         </thead>
         <tbody>{renderTable()}</tbody>
       </table>
+      <button
+        type="button"
+        className="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        New Comment
+      </button>
       <Outlet />
+
+      <div
+        className="modal fade"
+        id="exampleModal"
+        // tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                New Comment
+              </h5>
+            </div>
+            <div className="modal-body">
+              <form
+                onSubmit={handleSubmit}
+                // className={wasValidated ? "was-validated" : ""}
+                noValidate
+              >
+                <div className="mb-3">
+                  <label className="form-label">Car ID:</label>
+                  <input
+                    name="commentDescription"
+                    value={params.id}
+                    className="form-control"
+                    onChange={handleChange}
+                    required
+                    readOnly
+                  ></input>
+                  <div className="valid-feedback"></div>
+                  <div className="invalid-feedback">
+                    Please fill out this field.
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Comment Description:</label>
+                  <input
+                    name="commentDescription"
+                    // value={teslaCar.commentDescription}
+                    className="form-control"
+                    onChange={handleChange}
+                    required
+                  ></input>
+                  <div className="valid-feedback"></div>
+                  <div className="invalid-feedback">
+                    Please fill out this field.
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">User:</label>
+                  <input
+                    name="user"
+                    // value={teslaCar.user}
+                    className="form-control"
+                    onChange={handleChange}
+                    required
+                  ></input>
+                  <div className="valid-feedback"></div>
+                  <div className="invalid-feedback">
+                    Please fill out this field.
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  // disabled={isLoading}
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+            <div className="modal-footer">
+              {/* <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="button" className="btn btn-primary">
+                Submit
+              </button> */}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
