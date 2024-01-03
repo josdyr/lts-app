@@ -9,8 +9,6 @@ import { MsalProvider } from "@azure/msal-react";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-msalInstance.loginRedirect();
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <MsalProvider instance={msalInstance}>
