@@ -10,11 +10,13 @@ import NoMatch from "./components/NoMatch";
 import { ObjectDetail } from "./components/ObjectDetail";
 import { CreateNew } from "./components/CreateNew";
 import { CreateNewComment } from "./components/CreateNewComment";
+import LoginButton from "./components/LoginButton";
 
 function App() {
   return (
     <>
       <Navbar />
+      <LoginButton />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="tesla-cars" element={<TeslaCars />} />
