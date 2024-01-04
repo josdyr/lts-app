@@ -18,6 +18,7 @@ const AllComments: React.FC = () => {
 
   useEffect(() => {
     const pubSubClient = new WebPubSubClient(pubSubToken);
+    console.log("pubSubToken: ", pubSubToken);
 
     pubSubClient?.on("server-message", (e) => {
       let data = e.message.data;
@@ -48,7 +49,7 @@ const AllComments: React.FC = () => {
       pubSubClient?.off("server-message", () => {});
       pubSubClient?.stop();
     };
-  }, []);
+  }, [pubSubToken]);
 
   function toLowerCamelCase(obj: any): any {
     let newObj: any = {};
