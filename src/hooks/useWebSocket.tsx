@@ -1,31 +1,41 @@
 import { useEffect } from "react";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
+import useGlobal from "../context/globalContextProvider";
 
 export const useWebSocket = () => {
+  const { pubSubToken } = useGlobal();
+
   useEffect(() => {
-    // Instantiates the client object
-    const client = new WebPubSubClient(import.meta.env.VITE_WPS_CONNECTION);
+    const pubSubClient = new WebPubSubClient(pubSubToken);
+    console.log("pubSubToken: ", pubSubToken);
 
-    (async () => {
-      // Starts the client connection with your Web PubSub resource
-      await client.start();
+    pubSubClient?.on("server-message", (e) => {
+      let data = e.message.data;
 
-      client.on("server-message", (e) => {
-        console.log(`Received message: ${e.message.data}`);
-        // fetch or receive a JSON and add dynamically to table
-      });
+      if (typeof data === "string") {
+        let deserializedData = JSON.parse(data);
 
-      client.on("connected", (e) => {
-        console.log(`Connection ${e.connectionId} is connected.`);
-      });
+        // setAllComments((prev) => {
+        //   return [...prev, deserializedData];
+        // });
+      } else {
+        console.error("Received data is not a string:", data);
+      }
+    });
 
-      client.on("disconnected", (e) => {
-        console.log(`Connection disconnected: ${e.message}`);
-      });
-    })();
-  }, []);
+    pubSubClient?.on("connected", (e) => {
+      console.log(`Connection ${e.connectionId} is connected.`);
+    });
 
-  return () => {
-    // client.stop();
-  };
+    pubSubClient?.on("disconnected", (e) => {
+      console.log(`Connection disconnected: ${e.message}`);
+    });
+
+    pubSubClient?.start();
+
+    return () => {
+      pubSubClient?.off("server-message", () => {});
+      pubSubClient?.stop();
+    };
+  }, [pubSubToken]);
 };

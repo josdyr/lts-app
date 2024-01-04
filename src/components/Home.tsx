@@ -1,6 +1,7 @@
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { useState, useEffect, useCallback } from "react";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
+import useGlobal from "../context/globalContextProvider";
 
 interface TeslaCar {
   id: string;
@@ -13,6 +14,46 @@ export const Home = () => {
   const [teslaCars, setTeslaCars] = useState<TeslaCar[]>([]);
   const [isMapLoading, setisMapLoading] = useState(true);
   const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+  const { pubSubToken } = useGlobal();
+
+  useEffect(() => {
+    const pubSubClient = new WebPubSubClient(pubSubToken);
+    console.log("pubSubToken: ", pubSubToken);
+
+    pubSubClient?.on("server-message", (e) => {
+      let data = e.message.data;
+
+      if (typeof data === "string") {
+        let deserializedData = JSON.parse(data);
+        let camelCaseJson = toLowerCamelCase(deserializedData);
+
+        // setTeslaCars once and only once
+        setTeslaCars((prev) => {
+          return [...prev, camelCaseJson];
+        });
+        // re-render the map
+        setisMapLoading(true);
+        fetchData();
+      } else {
+        console.error("Received data is not a string:", data);
+      }
+    });
+
+    pubSubClient?.on("connected", (e) => {
+      console.log(`Connection ${e.connectionId} is connected.`);
+    });
+
+    pubSubClient?.on("disconnected", (e) => {
+      console.log(`Connection disconnected: ${e.message}`);
+    });
+
+    pubSubClient?.start();
+
+    return () => {
+      pubSubClient?.off("server-message", () => {});
+      pubSubClient?.stop();
+    };
+  }, [pubSubToken]);
 
   function toLowerCamelCase(obj: any): any {
     let newObj: any = {};
@@ -22,44 +63,6 @@ export const Home = () => {
     }
     return newObj;
   }
-
-  useEffect(() => {
-    const client = new WebPubSubClient(import.meta.env.VITE_WPS_CONNECTION);
-
-    (async () => {
-      await client.start();
-
-      client.on("server-message", (e) => {
-        let data = e.message.data;
-
-        // Check if data is a string before parsing
-        if (typeof data === "string") {
-          console.log(`Received message: ${data}`);
-          let deserializedData = JSON.parse(data); // data is confirmed to be a string
-          let camelCaseJson = toLowerCamelCase(deserializedData);
-
-          // setTeslaCars once and only once
-          setTeslaCars((prev) => {
-            return [...prev, camelCaseJson];
-          });
-          // re-render the map
-          setisMapLoading(true);
-          fetchData();
-        } else {
-          // Handle the case where data is not a string
-          console.error("Received data is not a string:", data);
-        }
-      });
-
-      client.on("connected", (e) => {
-        console.log(`Connection ${e.connectionId} is connected.`);
-      });
-
-      client.on("disconnected", (e) => {
-        console.log(`Connection disconnected: ${e.message}`);
-      });
-    })();
-  }, []);
 
   const fetchData = async () => {
     try {

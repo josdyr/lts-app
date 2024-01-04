@@ -15,11 +15,13 @@ import { useIsAuthenticated } from "@azure/msal-react";
 import { GlobalProvider } from "./context/globalContextProvider";
 
 function App() {
+  const isProduction = import.meta.env.PROD;
   const isAuthenticated = useIsAuthenticated();
+  const shouldRenderApp = isProduction ? isAuthenticated : true;
 
   return (
     <>
-      {isAuthenticated && (
+      {shouldRenderApp && (
         <>
           <GlobalProvider>
             <Navbar />
@@ -40,7 +42,7 @@ function App() {
           </GlobalProvider>
         </>
       )}
-      {!isAuthenticated && <LoginButton />}
+      {!shouldRenderApp && <LoginButton />}
     </>
   );
 }
