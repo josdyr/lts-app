@@ -12,35 +12,35 @@ import { CreateNew } from "./components/CreateNew";
 import { CreateNewComment } from "./components/CreateNewComment";
 import LoginButton from "./components/LoginButton";
 import { useIsAuthenticated } from "@azure/msal-react";
+import { GlobalProvider } from "./context/globalContextProvider";
 
 function App() {
   const isAuthenticated = useIsAuthenticated();
 
   return (
     <>
-      <LoginButton />
       {isAuthenticated && (
         <>
-          {/* <GlobalProvider> */}
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="tesla-cars" element={<TeslaCars />} />
-            <Route path="tesla-cars/:id" element={<ObjectDetail />} />
-            <Route path="tesla-cars/create-new" element={<CreateNew />} />
-            <Route path="cityitems" element={<CityCodes />} />
-            <Route path="comment" element={<AllComments />} />
-            <Route path="comment/:id" element={<CommentDetail />} />
-            <Route
-              path="comment/create-new-comment"
-              element={<CreateNewComment />}
-            />
-            <Route path="*" element={<NoMatch />} />
-          </Routes>
-          {/* </GlobalProvider> */}
+          <GlobalProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="tesla-cars" element={<TeslaCars />} />
+              <Route path="tesla-cars/:id" element={<ObjectDetail />} />
+              <Route path="tesla-cars/create-new" element={<CreateNew />} />
+              <Route path="cityitems" element={<CityCodes />} />
+              <Route path="comment" element={<AllComments />} />
+              <Route path="comment/:id" element={<CommentDetail />} />
+              <Route
+                path="comment/create-new-comment"
+                element={<CreateNewComment />}
+              />
+              <Route path="*" element={<NoMatch />} />
+            </Routes>
+          </GlobalProvider>
         </>
       )}
-      {/* {!isAuthenticated && <Login />} */}
+      {!isAuthenticated && <LoginButton />}
     </>
   );
 }

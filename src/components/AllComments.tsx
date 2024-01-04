@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
+import useGlobal from "../context/globalContextProvider";
 
 interface Comment {
   id: string;
@@ -13,6 +14,41 @@ interface Comment {
 const AllComments: React.FC = () => {
   const [allComments, setAllComments] = useState<Comment[]>([]);
   const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+  const { pubSubToken } = useGlobal();
+
+  useEffect(() => {
+    const pubSubClient = new WebPubSubClient(pubSubToken);
+
+    pubSubClient?.on("server-message", (e) => {
+      let data = e.message.data;
+
+      if (typeof data === "string") {
+        let deserializedData = JSON.parse(data);
+        let camelCaseJson = toLowerCamelCase(deserializedData);
+
+        setAllComments((prev) => {
+          return [...prev, camelCaseJson];
+        });
+      } else {
+        console.error("Received data is not a string:", data);
+      }
+    });
+
+    pubSubClient?.on("connected", (e) => {
+      console.log(`Connection ${e.connectionId} is connected.`);
+    });
+
+    pubSubClient?.on("disconnected", (e) => {
+      console.log(`Connection disconnected: ${e.message}`);
+    });
+
+    pubSubClient?.start();
+
+    return () => {
+      pubSubClient?.off("server-message", () => {});
+      pubSubClient?.stop();
+    };
+  }, []);
 
   function toLowerCamelCase(obj: any): any {
     let newObj: any = {};
@@ -22,41 +58,6 @@ const AllComments: React.FC = () => {
     }
     return newObj;
   }
-
-  useEffect(() => {
-    const client = new WebPubSubClient(import.meta.env.VITE_WPS_CONNECTION);
-
-    (async () => {
-      await client.start();
-
-      client.on("server-message", (e) => {
-        let data = e.message.data;
-
-        // Check if data is a string before parsing
-        if (typeof data === "string") {
-          console.log(`Received message: ${data}`);
-          let deserializedData = JSON.parse(data); // data is confirmed to be a string
-          let camelCaseJson = toLowerCamelCase(deserializedData);
-
-          // setAllComments once and only once
-          setAllComments((prev) => {
-            return [...prev, camelCaseJson];
-          });
-        } else {
-          // Handle the case where data is not a string
-          console.error("Received data is not a string:", data);
-        }
-      });
-
-      client.on("connected", (e) => {
-        console.log(`Connection ${e.connectionId} is connected.`);
-      });
-
-      client.on("disconnected", (e) => {
-        console.log(`Connection disconnected: ${e.message}`);
-      });
-    })();
-  }, []);
 
   const fetchData = async () => {
     try {
