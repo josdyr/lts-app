@@ -13,8 +13,7 @@ export const useWebSocket = () => {
       let data = e.message.data;
 
       if (typeof data === "string") {
-        let deserializedData = JSON.parse(data);
-
+        // let deserializedData = JSON.parse(data);
         // setAllComments((prev) => {
         //   return [...prev, deserializedData];
         // });
