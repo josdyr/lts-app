@@ -44,7 +44,7 @@ const Comment: React.FC = () => {
     });
 
     pubSubClient?.on("connected", (e) => {
-      console.log(`Connection ${e.connectionId} is connected.`);
+      console.log(`WebSocket connection ${e.connectionId} is connected.`);
     });
 
     pubSubClient?.on("disconnected", (e) => {
