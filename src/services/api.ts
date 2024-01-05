@@ -2,7 +2,6 @@ import { pubSubToken } from "./apiTypes";
 
 const apiService = () => {
   const getByFetch = async (url: string): Promise<any> => {
-    debugger;
     const getOperation = {
       method: "GET",
       headers: {

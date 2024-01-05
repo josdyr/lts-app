@@ -140,6 +140,19 @@ export const Home = () => {
     Sarpsborg: { lat: 59.2833, lng: 11.1167 },
   };
 
+  let cityCountMap = new Map();
+
+  teslaCars.forEach((car) => {
+    let city = car.location;
+    if (cityCountMap.has(city)) {
+      cityCountMap.set(city, cityCountMap.get(city) + 1);
+    } else {
+      cityCountMap.set(city, 1);
+    }
+  });
+
+  console.log("cityCountMap: ", cityCountMap);
+
   // Center the map around southern Norway
   const center = {
     lat:
@@ -161,12 +174,13 @@ export const Home = () => {
   const handleMapLoad = useCallback(
     (map: any) => {
       if (!isMapLoading) {
-        console.log(teslaCars);
         teslaCars.forEach((car) => {
           const location = car.location as keyof typeof cities;
+          const locationCount = cityCountMap.get(car.location);
           const marker = new window.google.maps.Marker({
             position: cities[location],
             map: map,
+            label: locationCount.toString(),
             title: car.model,
           });
 
