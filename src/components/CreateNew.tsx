@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import jsonQuery from "../../public/query.json";
+import { useCityCode } from "../hooks/useCityCode";
 
 interface TeslaCar {
   model: string;
@@ -22,14 +23,14 @@ export const CreateNew = () => {
     location: "",
     serialNumber: "",
   });
-  const [cityCode, setCityCode] = useState<CityCode[]>([]);
+  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
+  const [wasValidated, setWasValidated] = useState<boolean>(false);
+  const [cityCode] = useCityCode(currentURL);
+
   const [norwegianCities, setNorwegianCities] = useState<NorwegianCity[]>([]);
   const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
-  const [wasValidated, setWasValidated] = useState<boolean>(false);
-  const currentURL: string = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
 
   useEffect(() => {
-    fetchCityCode();
     fetchNorwegianCities();
   }, []);
 
@@ -38,7 +39,9 @@ export const CreateNew = () => {
       Object.keys(cityCode).length > 0 &&
       Object.keys(norwegianCities).length > 0
     ) {
-      mergeCityWithCode(cityCode, norwegianCities);
+      if (cityCode.length > 0 && norwegianCities.length > 0) {
+        mergeCityWithCode(cityCode as CityCode[], norwegianCities);
+      }
     }
   }, [cityCode, norwegianCities]);
 
@@ -73,19 +76,6 @@ export const CreateNew = () => {
     });
     setMergedCityWithCode(mergedArray);
   }
-
-  const fetchCityCode = async () => {
-    try {
-      const response = await fetch(currentURL + "/api/citycode");
-      if (!response.ok) {
-        throw new Error(`HTTPS error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setCityCode(data);
-    } catch (error) {
-      console.error("error fetching data: ", error);
-    }
-  };
 
   function processData(data: any) {
     const values = data.value;

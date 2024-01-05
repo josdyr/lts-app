@@ -34,7 +34,6 @@ export function GlobalProvider({
     const response = await api.getPubSubAccessToken();
     if (response) {
       setPubSubToken(response.token);
-      console.log("pubSubToken: ", response.token);
     }
   };
 

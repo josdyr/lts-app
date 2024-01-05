@@ -7,7 +7,6 @@ export const useWebSocket = () => {
 
   useEffect(() => {
     const pubSubClient = new WebPubSubClient(pubSubToken);
-    console.log("pubSubToken: ", pubSubToken);
 
     pubSubClient?.on("server-message", (e) => {
       let data = e.message.data;
