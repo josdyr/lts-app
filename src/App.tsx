@@ -10,14 +10,14 @@ import NoMatch from "./components/NoMatch";
 import { ObjectDetail } from "./components/ObjectDetail";
 import { CreateNew } from "./components/CreateNew";
 import { CreateNewComment } from "./components/CreateNewComment";
-import LoginButton from "./components/LoginButton";
-import { useIsAuthenticated } from "@azure/msal-react";
+// import LoginButton from "./components/LoginButton";
+// import { useIsAuthenticated } from "@azure/msal-react";
 import { GlobalProvider } from "./context/globalContextProvider";
 
 function App() {
-  const isProduction = import.meta.env.PROD;
-  const isAuthenticated = useIsAuthenticated();
-  const shouldRenderApp = isProduction ? isAuthenticated : true;
+  // const isProduction = import.meta.env.PROD;
+  // const isAuthenticated = useIsAuthenticated();
+  // const shouldRenderApp = isProduction ? isAuthenticated : true;
 
   return (
     <>
