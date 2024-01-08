@@ -21,28 +21,28 @@ function App() {
 
   return (
     <>
-      {shouldRenderApp && (
-        <>
-          <GlobalProvider>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="tesla-cars" element={<TeslaCars />} />
-              <Route path="tesla-cars/:id" element={<ObjectDetail />} />
-              <Route path="tesla-cars/create-new" element={<CreateNew />} />
-              <Route path="cityitems" element={<CityCodes />} />
-              <Route path="comment" element={<AllComments />} />
-              <Route path="comment/:id" element={<CommentDetail />} />
-              <Route
-                path="comment/create-new-comment"
-                element={<CreateNewComment />}
-              />
-              <Route path="*" element={<NoMatch />} />
-            </Routes>
-          </GlobalProvider>
-        </>
-      )}
-      {!shouldRenderApp && <LoginButton />}
+      {/* {shouldRenderApp && ( */}
+      <>
+        <GlobalProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="tesla-cars" element={<TeslaCars />} />
+            <Route path="tesla-cars/:id" element={<ObjectDetail />} />
+            <Route path="tesla-cars/create-new" element={<CreateNew />} />
+            <Route path="cityitems" element={<CityCodes />} />
+            <Route path="comment" element={<AllComments />} />
+            <Route path="comment/:id" element={<CommentDetail />} />
+            <Route
+              path="comment/create-new-comment"
+              element={<CreateNewComment />}
+            />
+            <Route path="*" element={<NoMatch />} />
+          </Routes>
+        </GlobalProvider>
+      </>
+      {/* )} */}
+      {/* {!shouldRenderApp && <LoginButton />} */}
     </>
   );
 }
