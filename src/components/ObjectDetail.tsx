@@ -265,7 +265,7 @@ export const ObjectDetail = () => {
       }
       if (teslaCar.id) {
         response = await fetch(currentURL + `/api/teslacar/${teslaCar.id}`, {
-          method: "PUT", // Use PUT for update
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
@@ -273,26 +273,16 @@ export const ObjectDetail = () => {
       } else {
         payload.id = 0;
         response = await fetch(currentURL + "/api/teslacar", {
-          method: "POST", // Use POST for create
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
         if (!response.ok) {
-          alert(
-            `Serial number is not valid. Correct format could be: TC-00001-RG`
-          );
+          alert(`Message from backend: ${await response.text()}`);
           throw new Error(`HTTPS error! Status: ${response.status}`);
         } else {
           console.log("Create");
         }
-      }
-
-      if (!response.ok) {
-        // const errorData = await response.json();
-        alert(
-          `Serial number is not valid. Correct format could be: TC-00001-RG`
-        );
-        throw new Error(`HTTPS error! Status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
