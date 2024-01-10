@@ -37,6 +37,7 @@ export const ObjectDetail = () => {
   const [mergedCityWithCode, setMergedCityWithCode] = useState<CityCode[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [submitState, setSubmitState] = useState("Submit");
+  const [shouldDelete, setShouldDelete] = useState(false);
   const currentURL = import.meta.env.VITE_AZURE_REACT_APP_BACKEND_URL;
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const containerStyle = {
@@ -126,6 +127,13 @@ export const ObjectDetail = () => {
       console.error("error fetching data: ", error);
     }
   };
+
+  useEffect(() => {
+    if (shouldDelete) {
+      handleSubmit();
+      setShouldDelete(false);
+    }
+  }, [teslaCar, shouldDelete]);
 
   useEffect(() => {
     fetchData();
@@ -234,8 +242,10 @@ export const ObjectDetail = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent the default form submission
+  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+    if (e) {
+      e.preventDefault();
+    }
 
     setIsLoading(true);
     setSubmitState("Loading");
@@ -246,7 +256,7 @@ export const ObjectDetail = () => {
 
     try {
       let response = null;
-      if (Object.values(teslaCar).every((x) => x === "")) {
+      if (Object.values(teslaCar).every((x) => x === "" || x === 0)) {
         response = await fetch(currentURL + `/api/teslacar/${params.id}`, {
           method: "DELETE",
         });
@@ -328,7 +338,21 @@ export const ObjectDetail = () => {
   );
 
   if (isMapLoading) {
-    return <div>Loading...</div>; // Render a loading state or a spinner
+    return <div>Loading...</div>;
+  }
+
+  function handleDeleteObject(event: any): void {
+    event.preventDefault();
+    if (window.confirm("Are you sure you want to delete this object?")) {
+      setTeslaCar({
+        teslaCarGuid: "",
+        id: 0,
+        model: "",
+        location: "",
+        serialNumber: "",
+      });
+      setShouldDelete(true);
+    }
   }
 
   return (
@@ -424,6 +448,13 @@ export const ObjectDetail = () => {
             readOnly
           />
         </div>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={handleDeleteObject}
+        >
+          Delete
+        </button>
         <button type="submit" className="btn btn-primary" disabled={isLoading}>
           {submitState}
         </button>
